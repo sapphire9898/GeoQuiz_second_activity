@@ -14,9 +14,12 @@ import android.widget.TextView;
 public class CheatActivity extends AppCompatActivity {
     private static final String EXTRA_ANSWER_IS_TRUE = "com.example.yueyangzou.geoquiz.answer_is_true";
     private static final String EXTRA_ANSWER_SHOWN = "com.example.yueyangzou.geoquiz.answer_shown";
+    private static final String BOOLEAN_INDEX = "B_INDEX";
     private boolean mAnswerIsTrue;
     private TextView mAnswerTextView;
     private Button mShowAnswer;
+    private boolean buttonPressed;
+    private boolean[] res = new boolean[2];
 
 
     public static Intent newIntent(Context packageContext, boolean answerIsTrue) {
@@ -47,10 +50,36 @@ public class CheatActivity extends AppCompatActivity {
                     mAnswerTextView.setText(R.string.false_button);
                 }
                 setAnswerShownResult(true);
+                buttonPressed = true;
             }
         });
 
+        if (savedInstanceState != null) {
+            res = savedInstanceState.getBooleanArray(BOOLEAN_INDEX);
+            if (res[0]) {
+                if (res[1]) {
+                    mAnswerTextView.setText(R.string.true_button);
+                } else {
+                    mAnswerTextView.setText(R.string.false_button);
+                }
+                setAnswerShownResult(true);
+            }
+            else {
+                setAnswerShownResult(false);
+            }
+        }
+
+
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        res[0] = buttonPressed;
+        res[1] = mAnswerIsTrue;
+        savedInstanceState.putBooleanArray(BOOLEAN_INDEX, res);
+    }
+
 
     private void setAnswerShownResult(boolean isAnswerShown) {
         Intent data = new Intent();
